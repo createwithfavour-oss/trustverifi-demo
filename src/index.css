@@ -1,0 +1,271 @@
+@import "tailwindcss";
+
+/* ===== DESIGN SYSTEM: CUSTOM PROPERTIES ===== */
+:root {
+  /* Palette */
+  --color-hero-bg: #0B1120;
+  --color-hero-bg-mid: #162038;
+  --color-surface: #FAFAF8;
+  --color-surface-alt: #FFFFFF;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #555555;
+  --color-text-tertiary: #888888;
+  --color-text-on-dark: #FFFFFF;
+  --color-text-on-dark-muted: rgba(255,255,255,0.55);
+  --color-accent: #38bdf8;
+  --color-accent-hover: #7dd3fc;
+  --color-accent-subtle: rgba(56,189,248,0.08);
+  --color-accent-secondary: #818cf8;
+  --color-accent-tertiary: #a78bfa;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #fbbf24;
+  --color-border: #eeeeee;
+  --color-border-dark: rgba(255,255,255,0.1);
+
+  /* Typography */
+  --font-heading: "DM Serif Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Easing */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+  background-color: var(--color-surface);
+}
+
+/* ===== NOISE TEXTURE OVERLAY (hero/CTA sections only) ===== */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  z-index: 1;
+}
+
+/* ===== GRID OVERLAY ===== */
+.grid-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== SCROLL ANIMATION ===== */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-from-right {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+
+.animate-from-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===== GRADIENT TEXT ===== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== TRUST SCORE RING ===== */
+@property --score-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.score-ring {
+  background: conic-gradient(
+    var(--color-accent) 0deg,
+    var(--color-accent-secondary) calc(var(--score-angle)),
+    rgba(255,255,255,0.08) calc(var(--score-angle))
+  );
+  transition: --score-angle 1.5s var(--ease-out);
+}
+
+/* ===== BUTTON INTERACTIONS ===== */
+.btn-primary {
+  background-color: var(--color-accent);
+  color: #0B1120;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), background-color 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+  background-color: var(--color-accent-hover);
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.25);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text-on-dark);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-dark);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), border-color 0.2s, background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  transform: scale(1.02);
+  border-color: var(--color-accent);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.btn-secondary-light {
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), border-color 0.2s, background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-secondary-light:hover {
+  transform: scale(1.02);
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+/* ===== CARD HOVER ===== */
+.card-hover {
+  transition: transform 0.3s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* ===== SECTION LABEL ===== */
+.section-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* ===== SECTION HEADING ===== */
+.section-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+/* ===== PILL BADGE ===== */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===== PULSING DOT ===== */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-success);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ===== DRIFTING BLOBS (hero bg) ===== */
+@keyframes drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 20px) scale(0.95); }
+  66% { transform: translate(20px, -15px) scale(1.05); }
+}
+
+/* ===== SMOOTH SCROLL ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== SELECTION ===== */
+::selection {
+  background-color: rgba(56, 189, 248, 0.2);
+  color: inherit;
+}
