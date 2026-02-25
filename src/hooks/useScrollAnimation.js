@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export function useScrollAnimation(options = {}) {
+export function useScrollAnimation() {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -16,40 +16,38 @@ export function useScrollAnimation(options = {}) {
           }
         });
       },
-      { threshold: options.threshold || 0.15, rootMargin: options.rootMargin || '0px' }
+      { threshold: 0.1 }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [options.threshold, options.rootMargin]);
+  }, []);
 
   return ref;
 }
 
-export function useStaggerAnimation(containerSelector) {
+export function useStaggerChildren() {
   const ref = useRef(null);
 
   useEffect(() => {
     const container = ref.current;
     if (!container) return;
 
-    const children = container.querySelectorAll('.animate-on-scroll');
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const items = entry.target.querySelectorAll('.animate-on-scroll');
+            const items = entry.target.querySelectorAll('.fade-in');
             items.forEach((item, i) => {
               setTimeout(() => {
                 item.classList.add('visible');
-              }, i * 100);
+              }, i * 120);
             });
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.05 }
     );
 
     observer.observe(container);

@@ -5,107 +5,75 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 80);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
+  const links = [
     { label: 'How It Works', href: '#how-it-works' },
     { label: 'Features', href: '#what-you-get' },
     { label: 'Who It\'s For', href: '#who-its-for' },
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#0B1120]/85 backdrop-blur-lg border-b border-white/10'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-[72px]">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-2.5 no-underline">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#818cf8] flex items-center justify-center text-white text-xs font-bold"
-               style={{ fontFamily: 'var(--font-body)' }}>
-            TV
-          </div>
-          <span className="text-white font-semibold text-[16px]" style={{ fontFamily: 'var(--font-body)' }}>
-            TrustVerifi
-          </span>
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 72,
+      display: 'flex', alignItems: 'center', transition: 'all 0.3s ease',
+      background: scrolled ? 'rgba(11,17,32,0.88)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(16px)' : 'none',
+      WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: 8,
+            background: 'linear-gradient(135deg, #38bdf8, #818cf8)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-body)',
+          }}>TV</div>
+          <span style={{ color: '#fff', fontWeight: 600, fontSize: 16, fontFamily: 'var(--font-body)' }}>TrustVerifi</span>
         </a>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-white/55 hover:text-white text-[14px] font-medium transition-colors duration-200 no-underline"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              {link.label}
-            </a>
+        {/* Desktop */}
+        <div className="hidden md:flex" style={{ alignItems: 'center', gap: 32 }}>
+          {links.map(l => (
+            <a key={l.href} href={l.href} style={{
+              color: 'rgba(255,255,255,0.55)', fontSize: 14, fontWeight: 500,
+              textDecoration: 'none', fontFamily: 'var(--font-body)', transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.target.style.color = '#fff'}
+            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.55)'}
+            >{l.label}</a>
           ))}
-          <a
-            href="#"
-            className="text-white/55 hover:text-white text-[14px] font-medium transition-colors duration-200 no-underline"
-            style={{ fontFamily: 'var(--font-body)' }}
-          >
-            Log In
-          </a>
-          <a
-            href="#get-started"
-            className="btn-primary !py-2.5 !px-5 !text-[14px] no-underline"
-          >
-            Get Started Free
-          </a>
+          <a href="#" style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14, fontWeight: 500, textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Log In</a>
+          <a href="#get-started" className="btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>Get Started Free</a>
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          className="md:hidden flex flex-col gap-1.5 bg-transparent border-none cursor-pointer p-2"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          <span className={`block w-5 h-[2px] bg-white transition-transform duration-200 ${mobileOpen ? 'rotate-45 translate-y-[5px]' : ''}`} />
-          <span className={`block w-5 h-[2px] bg-white transition-opacity duration-200 ${mobileOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-5 h-[2px] bg-white transition-transform duration-200 ${mobileOpen ? '-rotate-45 -translate-y-[5px]' : ''}`} />
+        {/* Mobile */}
+        <button onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"
+          className="md:hidden"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
+          <span style={{ display: 'block', width: 20, height: 2, background: '#fff', transition: 'transform 0.2s', transform: mobileOpen ? 'rotate(45deg) translateY(7px)' : 'none' }} />
+          <span style={{ display: 'block', width: 20, height: 2, background: '#fff', transition: 'opacity 0.2s', opacity: mobileOpen ? 0 : 1 }} />
+          <span style={{ display: 'block', width: 20, height: 2, background: '#fff', transition: 'transform 0.2s', transform: mobileOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }} />
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#0B1120]/95 backdrop-blur-lg border-t border-white/10 px-6 py-6 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-white/70 hover:text-white text-[15px] font-medium no-underline"
-              style={{ fontFamily: 'var(--font-body)' }}
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-            </a>
+        <div style={{
+          position: 'absolute', top: 72, left: 0, right: 0,
+          background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(16px)',
+          borderTop: '1px solid rgba(255,255,255,0.08)', padding: 24,
+          display: 'flex', flexDirection: 'column', gap: 16,
+        }}>
+          {links.map(l => (
+            <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)}
+               style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: 500, textDecoration: 'none', fontFamily: 'var(--font-body)' }}>{l.label}</a>
           ))}
-          <a
-            href="#"
-            className="text-white/70 hover:text-white text-[15px] font-medium no-underline"
-            style={{ fontFamily: 'var(--font-body)' }}
-            onClick={() => setMobileOpen(false)}
-          >
-            Log In
-          </a>
-          <a
-            href="#get-started"
-            className="btn-primary !text-center !justify-center no-underline"
-            onClick={() => setMobileOpen(false)}
-          >
-            Get Started Free
-          </a>
+          <a href="#" onClick={() => setMobileOpen(false)} style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: 500, textDecoration: 'none', fontFamily: 'var(--font-body)' }}>Log In</a>
+          <a href="#get-started" className="btn-primary" onClick={() => setMobileOpen(false)} style={{ textAlign: 'center', justifyContent: 'center' }}>Get Started Free</a>
         </div>
       )}
     </nav>

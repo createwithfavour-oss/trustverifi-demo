@@ -1,117 +1,83 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 function TrustScoreCounter({ target }) {
   const [count, setCount] = useState(0);
-  const started = useRef(false);
-
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-
+    let current = 0;
+    let interval;
     const timeout = setTimeout(() => {
-      let current = 0;
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         current += 1;
         setCount(current);
         if (current >= target) clearInterval(interval);
       }, 15);
     }, 800);
-
-    return () => clearTimeout(timeout);
+    return () => { clearTimeout(timeout); clearInterval(interval); };
   }, [target]);
-
   return count;
 }
 
 function ProfileCard() {
-  const cardRef = useRef(null);
-
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const timer = setTimeout(() => {
-      el.classList.add('visible');
-    }, 300);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setVisible(true), 400);
+    return () => clearTimeout(t);
   }, []);
 
+  const cardStyle = {
+    width: '100%', maxWidth: 400, borderRadius: 20, padding: 28,
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'rgba(255,255,255,0.05)',
+    backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateX(0)' : 'translateX(30px)',
+    transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+  };
+
   return (
-    <div
-      ref={cardRef}
-      className="animate-from-right w-full max-w-[420px] rounded-2xl p-7 border border-white/10 relative"
-      style={{
-        background: 'rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-      }}
-    >
-      {/* Profile Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#38bdf8] to-[#818cf8] flex items-center justify-center text-white text-lg font-bold shrink-0"
-             style={{ fontFamily: 'var(--font-body)' }}>
-          FY
-        </div>
+    <div style={cardStyle}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 14, flexShrink: 0,
+          background: 'linear-gradient(135deg, #38bdf8, #818cf8)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: '#fff', fontSize: 18, fontWeight: 700, fontFamily: 'var(--font-body)',
+        }}>FY</div>
         <div>
-          <h3 className="text-white text-[16px] font-semibold m-0" style={{ fontFamily: 'var(--font-body)' }}>
-            Favour Yusuf
-          </h3>
-          <p className="text-white/55 text-[13px] m-0 mt-0.5" style={{ fontFamily: 'var(--font-body)' }}>
-            Growth & Positioning Consultant
-          </p>
-          <div className="flex items-center gap-1.5 mt-1.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-[#38bdf8]">
+          <div style={{ color: '#fff', fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-body)' }}>Favour Yusuf</div>
+          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'var(--font-body)', marginTop: 2 }}>Growth & Positioning Consultant</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: '#38bdf8' }}>
               <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span className="text-[11px] text-[#38bdf8] font-medium" style={{ fontFamily: 'var(--font-mono)' }}>
-              Identity Verified
-            </span>
+            <span style={{ fontSize: 11, color: '#38bdf8', fontWeight: 500, fontFamily: 'var(--font-mono)' }}>Identity Verified</span>
           </div>
         </div>
       </div>
 
-      {/* Trust Score + Components */}
-      <div className="flex gap-5 mb-6">
-        {/* Score Ring */}
-        <div className="relative w-[80px] h-[80px] shrink-0">
-          <div
-            className="w-full h-full rounded-full flex items-center justify-center"
-            style={{
-              background: `conic-gradient(#38bdf8 0deg, #818cf8 ${87 * 3.13}deg, rgba(255,255,255,0.08) ${87 * 3.13}deg)`,
-              padding: '4px',
-            }}
-          >
-            <div className="w-full h-full rounded-full bg-[#0f1a2e] flex flex-col items-center justify-center">
-              <span className="text-white text-[24px] font-bold leading-none" style={{ fontFamily: 'var(--font-mono)' }}>
-                <TrustScoreCounter target={87} />
-              </span>
-              <span className="text-white/40 text-[9px] font-semibold tracking-widest mt-1" style={{ fontFamily: 'var(--font-mono)' }}>
-                TRUST
-              </span>
-            </div>
+      {/* Trust Score */}
+      <div style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
+        <div style={{
+          width: 80, height: 80, borderRadius: '50%', flexShrink: 0, padding: 4,
+          background: `conic-gradient(#38bdf8 0deg, #818cf8 ${87*3.13}deg, rgba(255,255,255,0.08) ${87*3.13}deg)`,
+        }}>
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#0f1a2e', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#fff', fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-mono)', lineHeight: 1 }}>
+              <TrustScoreCounter target={87} />
+            </span>
+            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 9, fontWeight: 600, letterSpacing: 2, fontFamily: 'var(--font-mono)', marginTop: 4 }}>TRUST</span>
           </div>
         </div>
-
-        {/* Score Components */}
-        <div className="flex flex-col gap-2.5 flex-1 justify-center">
-          {[
-            { label: 'Client Reviews', value: '5/5', pct: 100 },
-            { label: 'Identity', value: 'Verified', pct: 100 },
-            { label: 'Work History', value: '3 confirmed', pct: 75 },
-          ].map((item) => (
-            <div key={item.label}>
-              <div className="flex justify-between mb-1">
-                <span className="text-white/50 text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>
-                  {item.label}
-                </span>
-                <span className="text-white/70 text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>
-                  {item.value}
-                </span>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+          {[ { l: 'Client Reviews', v: '5/5', p: 100 }, { l: 'Identity', v: 'Verified', p: 100 }, { l: 'Work History', v: '3 confirmed', p: 75 } ].map(b => (
+            <div key={b.l}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-mono)' }}>{b.l}</span>
+                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-mono)' }}>{b.v}</span>
               </div>
-              <div className="h-[4px] rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#38bdf8] to-[#818cf8] transition-all duration-1000"
-                  style={{ width: `${item.pct}%`, transitionDelay: '1s' }}
-                />
+              <div style={{ height: 4, borderRadius: 4, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: 4, width: `${b.p}%`, background: 'linear-gradient(90deg, #38bdf8, #818cf8)' }} />
               </div>
             </div>
           ))}
@@ -119,44 +85,32 @@ function ProfileCard() {
       </div>
 
       {/* Mini Review */}
-      <div className="rounded-xl bg-white/5 border border-white/8 p-4 mb-5">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#fbbf24] to-[#ef4444] flex items-center justify-center text-white text-[11px] font-bold shrink-0"
-               style={{ fontFamily: 'var(--font-body)' }}>
-            JK
-          </div>
+      <div style={{ borderRadius: 14, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', padding: 16, marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            background: 'linear-gradient(135deg, #fbbf24, #ef4444)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-body)',
+          }}>JK</div>
           <div>
-            <span className="text-white text-[13px] font-semibold block" style={{ fontFamily: 'var(--font-body)' }}>
-              Jason K.
-            </span>
-            <span className="text-white/40 text-[11px]" style={{ fontFamily: 'var(--font-body)' }}>
-              CEO, VertexHQ
-            </span>
+            <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-body)' }}>Jason K.</div>
+            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, fontFamily: 'var(--font-body)' }}>CEO, VertexHQ</div>
           </div>
         </div>
-        <p className="text-white/70 text-[13px] leading-relaxed m-0 mb-3" style={{ fontFamily: 'var(--font-body)' }}>
+        <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, lineHeight: 1.6, fontFamily: 'var(--font-body)', margin: '0 0 12px' }}>
           "Favour ran our paid campaigns for 4 months. Lead volume increased 60%. ROI averaged 3.8x. We renewed twice."
         </p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="pill bg-[#38bdf8]/10 text-[#38bdf8] border border-[#38bdf8]/20 !text-[11px]">
-            +60% leads
-          </span>
-          <span className="pill bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20 !text-[11px]">
-            3.8x ROI
-          </span>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 12px', borderRadius: 20, background: 'rgba(56,189,248,0.1)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.2)', fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 500 }}>+60% leads</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 12px', borderRadius: 20, background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)', fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 500 }}>3.8x ROI</span>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3">
-        <button className="flex-1 py-2.5 rounded-[10px] bg-[#38bdf8] text-[#0B1120] text-[13px] font-semibold border-none cursor-pointer transition-all duration-200 hover:bg-[#7dd3fc]"
-                style={{ fontFamily: 'var(--font-body)' }}>
-          Hire
-        </button>
-        <button className="flex-1 py-2.5 rounded-[10px] bg-transparent text-white/70 text-[13px] font-semibold border border-white/15 cursor-pointer transition-all duration-200 hover:border-[#38bdf8] hover:text-white"
-                style={{ fontFamily: 'var(--font-body)' }}>
-          Shortlist
-        </button>
+      {/* Buttons */}
+      <div style={{ display: 'flex', gap: 12 }}>
+        <button style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: 'none', background: '#38bdf8', color: '#0B1120', fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer' }}>Hire</button>
+        <button style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer' }}>Shortlist</button>
       </div>
     </div>
   );
@@ -164,87 +118,45 @@ function ProfileCard() {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden noise-overlay grid-overlay"
-             style={{
-               background: 'linear-gradient(135deg, #0B1120 0%, #162038 40%, #1a2a4a 70%, #0B1120 100%)',
-             }}>
-      {/* Drifting Blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-[0.07]"
-          style={{
-            background: 'radial-gradient(circle, #38bdf8, transparent 70%)',
-            top: '-10%',
-            right: '-5%',
-            animation: 'drift1 20s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.05]"
-          style={{
-            background: 'radial-gradient(circle, #818cf8, transparent 70%)',
-            bottom: '-15%',
-            left: '-10%',
-            animation: 'drift2 25s ease-in-out infinite',
-          }}
-        />
+    <section className="noise-overlay grid-overlay" style={{
+      background: 'linear-gradient(135deg, #0B1120 0%, #162038 40%, #1a2a4a 70%, #0B1120 100%)',
+      minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', width: 600, height: 600, borderRadius: '50%', opacity: 0.07, background: 'radial-gradient(circle, #38bdf8, transparent 70%)', top: '-10%', right: '-5%', animation: 'drift1 20s ease-in-out infinite' }} />
+        <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', opacity: 0.05, background: 'radial-gradient(circle, #818cf8, transparent 70%)', bottom: '-15%', left: '-10%', animation: 'drift2 25s ease-in-out infinite' }} />
       </div>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-[120px] pb-20 w-full">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Left Column */}
-          <div className="flex-1 max-w-[580px]">
-            {/* Pill Badge */}
-            <div className="pill bg-[#38bdf8]/8 border border-[#38bdf8]/20 text-[#38bdf8] mb-8 inline-flex">
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: 1200, margin: '0 auto', padding: '120px 24px 80px', width: '100%' }}>
+        <div className="flex flex-col lg:flex-row" style={{ alignItems: 'center', gap: 64 }}>
+          <div style={{ flex: 1, maxWidth: 580 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 20, background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)', color: '#38bdf8', fontSize: 12, fontFamily: 'var(--font-mono)', fontWeight: 500, marginBottom: 32 }}>
               <span className="pulse-dot" />
-              <span>Free to start &middot; No credit card</span>
+              <span>Free to start · No credit card</span>
             </div>
 
-            {/* Headline */}
-            <h1
-              className="text-white mb-6 leading-[1.12] tracking-[-0.5px]"
-              style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: 'clamp(36px, 4.5vw, 56px)',
-                fontWeight: 400,
-              }}
-            >
+            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 4.5vw, 56px)', fontWeight: 400, lineHeight: 1.12, letterSpacing: -0.5, color: '#fff', marginBottom: 24 }}>
               Verified proof that shows{' '}
               <span className="gradient-text">what you actually delivered.</span>
             </h1>
 
-            {/* Supporting Text */}
-            <p
-              className="text-[16px] leading-relaxed mb-8 max-w-[500px]"
-              style={{
-                color: 'var(--color-text-on-dark-muted)',
-                fontFamily: 'var(--font-body)',
-              }}
-            >
+            <p style={{ fontSize: 16, lineHeight: 1.7, color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-body)', marginBottom: 32, maxWidth: 500 }}>
               Your clients answer specific questions about what you built, the results you drove, and why they'd hire you again. You get a trust profile with real numbers that you can share anywhere.
             </p>
 
-            {/* CTA Row */}
-            <div className="flex flex-wrap gap-4 mb-6">
-              <a href="#get-started" className="btn-primary no-underline">
-                Get your first verified review <span aria-hidden="true">&rarr;</span>
-              </a>
-              <a href="#how-it-works" className="btn-secondary no-underline">
-                See how it works
-              </a>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
+              <a href="#get-started" className="btn-primary">Get your first verified review →</a>
+              <a href="#how-it-works" className="btn-secondary">See how it works</a>
             </div>
 
-            {/* Trust Line */}
-            <p className="text-[13px] flex flex-wrap gap-x-4 gap-y-1"
-               style={{ color: 'var(--color-text-on-dark-muted)', fontFamily: 'var(--font-body)' }}>
-              <span>&#10003; Free tier available</span>
-              <span>&#10003; 2-minute setup</span>
-              <span>&#10003; No platform lock-in</span>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-body)', display: 'flex', flexWrap: 'wrap', gap: '4px 16px' }}>
+              <span>✓ Free tier available</span>
+              <span>✓ 2-minute setup</span>
+              <span>✓ No platform lock-in</span>
             </p>
           </div>
 
-          {/* Right Column — Profile Card */}
-          <div className="flex-1 flex justify-center lg:justify-end w-full">
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
             <ProfileCard />
           </div>
         </div>
